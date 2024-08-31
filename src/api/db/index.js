@@ -1,21 +1,131 @@
-import { doc, setDoc, Timestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { firebaseService } from "src/services/firebase";
 
-export async function createOrUpdateDoc(path, pathSegments = [], documentData) {
+export async function createDoc(path, documentData) {
   try {
-    if (!path) throw "Cannot get path";
-    if (!Array.isArray(pathSegments)) throw "Cannot get pathSegments";
-    if (Object.keys(documentData)?.length < 1) throw "Cannot get data";
-    const reference = doc(firebaseService.db, path, ...pathSegments);
+    const collectionReference = collection(firebaseService.db, path);
     const data = {
       ...documentData,
       submittedDate: Timestamp.fromDate(new Date()),
     };
-    await setDoc(reference, data);
+    await addDoc(collectionReference, data);
+    const document = {
+      ...data,
+      submittedDate: data.submittedDate.toDate(),
+    };
     return {
       code: 200,
       message: `[${path}] submitted successfully!`,
-      data: data,
+      data: document,
+    };
+  } catch (error) {
+    return {
+      code: error.code || 400,
+      message: error.message,
+      data: null,
+    };
+  }
+}
+
+export async function createDocById(path, documentId, documentData) {
+  try {
+    const documentReference = doc(firebaseService.db, path, documentId);
+    const data = {
+      ...documentData,
+      submittedDate: Timestamp.fromDate(new Date()),
+    };
+    await setDoc(documentReference, data);
+    const document = {
+      ...data,
+      submittedDate: data.submittedDate.toDate(),
+    };
+    return {
+      code: 200,
+      message: `[${path}] submitted successfully!`,
+      data: document,
+    };
+  } catch (error) {
+    return {
+      code: error.code || 400,
+      message: error.message,
+      data: null,
+    };
+  }
+}
+
+export async function findAllDocs(path) {
+  try {
+    const documents = [];
+    const collectionReference = collection(firebaseService.db, path);
+    const q = query(collectionReference, orderBy("submittedDate"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((document) => {
+      const documentData = {
+        id: document.id,
+        ...document.data(),
+        submittedDate: document.data().submittedDate.toDate(),
+      };
+      documents.push(documentData);
+    });
+    return {
+      code: 200,
+      message: `[${path}] retrieved successfully!`,
+      data: documents,
+    };
+  } catch (error) {
+    return {
+      code: error.code || 400,
+      message: error.message,
+      data: null,
+    };
+  }
+}
+
+export async function updateDocById(path, documentId, documentData) {
+  try {
+    const documentReference = doc(firebaseService.db, path, documentId);
+    const data = {
+      ...documentData,
+      submittedDate: Timestamp.fromDate(new Date()),
+    };
+    await updateDoc(documentReference, data);
+    const document = {
+      ...data,
+      submittedDate: data.submittedDate.toDate(),
+    };
+    return {
+      code: 200,
+      message: `[${path}] updated successfully!`,
+      data: document,
+    };
+  } catch (error) {
+    return {
+      code: error.code || 400,
+      message: error.message,
+      data: null,
+    };
+  }
+}
+
+export async function deleteDocById(path, documentId) {
+  try {
+    const documentReference = doc(firebaseService.db, path, documentId);
+    await deleteDoc(documentReference);
+    return {
+      code: 200,
+      message: `[${path}] deleted successfully!`,
+      data: null,
     };
   } catch (error) {
     return {
