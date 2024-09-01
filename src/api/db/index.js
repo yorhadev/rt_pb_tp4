@@ -9,6 +9,7 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { firebaseService } from "src/services/firebase";
 
@@ -33,7 +34,7 @@ export async function createDoc(path, documentData) {
     return {
       code: error.code || 400,
       message: error.message,
-      data: null,
+      data: {},
     };
   }
 }
@@ -59,7 +60,7 @@ export async function createDocById(path, documentId, documentData) {
     return {
       code: error.code || 400,
       message: error.message,
-      data: null,
+      data: {},
     };
   }
 }
@@ -68,7 +69,7 @@ export async function findAllDocs(path) {
   try {
     const documents = [];
     const collectionReference = collection(firebaseService.db, path);
-    const q = query(collectionReference, orderBy("submittedDate"));
+    const q = query(collectionReference.get(), orderBy("submittedDate"));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((document) => {
       const documentData = {
@@ -87,7 +88,38 @@ export async function findAllDocs(path) {
     return {
       code: error.code || 400,
       message: error.message,
-      data: null,
+      data: [],
+    };
+  }
+}
+
+export async function findAllDocsByFilter(path, whereFilter = []) {
+  try {
+    const documents = [];
+    const [param, operator, value] = whereFilter;
+    const collectionReference = collection(firebaseService.db, path);
+    const q = value
+      ? query(collectionReference, where(param, operator, value))
+      : query(collectionReference, orderBy("submittedDate"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((document) => {
+      const documentData = {
+        id: document.id,
+        ...document.data(),
+        submittedDate: document.data().submittedDate.toDate(),
+      };
+      documents.push(documentData);
+    });
+    return {
+      code: 200,
+      message: `[${path}] retrieved successfully!`,
+      data: documents,
+    };
+  } catch (error) {
+    return {
+      code: error.code || 400,
+      message: error.message,
+      data: [],
     };
   }
 }
@@ -113,7 +145,7 @@ export async function updateDocById(path, documentId, documentData) {
     return {
       code: error.code || 400,
       message: error.message,
-      data: null,
+      data: {},
     };
   }
 }
