@@ -34,7 +34,7 @@ export async function createDoc(path, documentData) {
     return {
       code: error.code || 400,
       message: error.message,
-      data: {},
+      data: null,
     };
   }
 }
@@ -60,7 +60,7 @@ export async function createDocById(path, documentId, documentData) {
     return {
       code: error.code || 400,
       message: error.message,
-      data: {},
+      data: null,
     };
   }
 }
@@ -69,7 +69,7 @@ export async function findAllDocs(path) {
   try {
     const documents = [];
     const collectionReference = collection(firebaseService.db, path);
-    const q = query(collectionReference.get(), orderBy("submittedDate"));
+    const q = query(collectionReference, orderBy("submittedDate"));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((document) => {
       const documentData = {
@@ -88,7 +88,7 @@ export async function findAllDocs(path) {
     return {
       code: error.code || 400,
       message: error.message,
-      data: [],
+      data: null,
     };
   }
 }
@@ -98,9 +98,7 @@ export async function findAllDocsByFilter(path, whereFilter = []) {
     const documents = [];
     const [param, operator, value] = whereFilter;
     const collectionReference = collection(firebaseService.db, path);
-    const q = value
-      ? query(collectionReference, where(param, operator, value))
-      : query(collectionReference, orderBy("submittedDate"));
+    const q = query(collectionReference, where(param, operator, value));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((document) => {
       const documentData = {
@@ -119,7 +117,7 @@ export async function findAllDocsByFilter(path, whereFilter = []) {
     return {
       code: error.code || 400,
       message: error.message,
-      data: [],
+      data: null,
     };
   }
 }
@@ -145,7 +143,7 @@ export async function updateDocById(path, documentId, documentData) {
     return {
       code: error.code || 400,
       message: error.message,
-      data: {},
+      data: null,
     };
   }
 }
