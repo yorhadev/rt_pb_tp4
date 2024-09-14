@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import styles from "./styles.module.css";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -52,6 +52,14 @@ export default function Login() {
         <Box className={styles.login_nav_container}>
           <Typography>Don't have an account?</Typography>
           <Link to="/register">Sign up</Link>
+        </Box>
+        <Divider>
+          <Typography component="p" variant="overline" color="textSecondary">
+            OR
+          </Typography>
+        </Divider>
+        <Box textAlign="center">
+          <Link to="/">Return to Home</Link>
         </Box>
       </Box>
     </Box>
