@@ -9,7 +9,7 @@ export default function Protected({ component }) {
 
   useEffect(() => {
     if (authenticated || pending) return;
-    navigate("/login", { replace: true });
+    navigate("/", { replace: true });
   }, [navigate, authenticated, pending]);
 
   if (authenticated && !pending) return component;

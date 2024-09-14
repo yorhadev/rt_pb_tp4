@@ -1,25 +1,45 @@
 :root {
-  --sm-width: 22.5rem;
+  --sm-screen-width: 22.5rem;
+  --md-screen-width: 48rem;
+  --lg-screen-width: 64rem;
 }
 
 .root_layout {
   min-height: 100dvh;
-  overflow: auto;
+  overflow-x: auto;
   position: relative;
 }
 
 .root_layout_container {
   border: 1px solid red;
   margin-inline: auto;
-  min-width: var(--sm-width);
-  max-width: var(--sm-width);
+  min-width: var(--sm-screen-width);
+  max-width: var(--sm-screen-width);
   min-height: inherit;
   padding-inline: 1rem;
 }
 
 .root_layout_fab_container {
-  --padding: 0.5rem;
+  --screen-width: var(--sm-screen-width);
   position: absolute;
-  bottom: var(--padding);
-  right: calc(50dvw - (var(--sm-width) / 2) + var(--padding));
+  bottom: 0.5rem;
+  right: calc(50dvw - (var(--screen-width) / 2) + 0.5rem);
+}
+
+@media screen and (min-width: 48rem) {
+  .root_layout_container {
+    max-width: var(--md-screen-width);
+  }
+  .root_layout_fab_container {
+    --screen-width: var(--md-screen-width);
+  }
+}
+
+@media screen and (min-width: 64rem) {
+  .root_layout_container {
+    max-width: var(--lg-screen-width);
+  }
+  .root_layout_fab_container {
+    --screen-width: var(--lg-screen-width);
+  }
 }
