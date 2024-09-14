@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { Box, createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { ThemeControlFab } from "src/components";
 import { AuthProvider } from "src/contexts/auth";
@@ -16,14 +16,14 @@ export default function RootLayout() {
       <CssBaseline />
       <AuthProvider>
         <SnackbarProvider>
-          <div className={styles.root_layout}>
-            <div className={styles.root_layout_container}>
+          <Box className={styles.root_layout}>
+            <Box className={styles.root_layout_container}>
               <Outlet />
-            </div>
-            <div className={styles.root_layout_fab_container}>
+            </Box>
+            <Box className={styles.root_layout_fab_container}>
               <ThemeControlFab />
-            </div>
-          </div>
+            </Box>
+          </Box>
         </SnackbarProvider>
       </AuthProvider>
     </ThemeProvider>
