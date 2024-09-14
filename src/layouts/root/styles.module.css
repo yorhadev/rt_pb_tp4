@@ -1,0 +1,25 @@
+:root {
+  --sm-width: 22.5rem;
+}
+
+.root_layout {
+  min-height: 100dvh;
+  overflow: auto;
+  position: relative;
+}
+
+.root_layout_container {
+  border: 1px solid red;
+  margin-inline: auto;
+  min-width: var(--sm-width);
+  max-width: var(--sm-width);
+  min-height: inherit;
+  padding-inline: 1rem;
+}
+
+.root_layout_fab_container {
+  --padding: 0.5rem;
+  position: absolute;
+  bottom: var(--padding);
+  right: calc(50dvw - (var(--sm-width) / 2) + var(--padding));
+}
