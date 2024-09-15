@@ -1,32 +1,32 @@
-.login_container {
+.register_container {
   display: grid;
   align-items: center;
   justify-items: center;
   min-height: inherit;
 }
 
-.login_content_container {
+.register_content_container {
   display: grid;
   gap: 3rem;
   max-width: 20.375rem;
   width: 100%;
 }
 
-.login_header_container {
+.register_header_container {
   display: grid;
   gap: 0.5rem;
 }
 
-.login_form_container {
+.register_form_container {
   display: grid;
   gap: 1rem;
 }
 
-.login_form_container button {
+.register_form_container button {
   margin-top: 1rem;
 }
 
-.login_nav_container {
+.register_nav_container {
   display: flex;
   align-items: center;
   justify-content: center;

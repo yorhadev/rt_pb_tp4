@@ -20,11 +20,11 @@ export default function Home() {
           personalized quotations in just a few clicks.
         </Typography>
         <Box className={styles.home_buttons_container}>
-          <Button variant="contained" onClick={() => navigateTo("/login")}>
+          <Button variant="contained" onClick={() => navigateTo("/register")}>
             Start for free
           </Button>
-          <Button variant="text" onClick={() => navigateTo("/register")}>
-            Sign in
+          <Button variant="text" onClick={() => navigateTo("/login")}>
+            Log in
           </Button>
         </Box>
       </Box>
