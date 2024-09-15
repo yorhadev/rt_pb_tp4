@@ -1,6 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
 import { AppLayout, RootLayout } from "src/layouts";
-import { Dashboard, Home, Login, Register } from "src/pages";
+import {
+  Contacts,
+  Dashboard,
+  Home,
+  Login,
+  Products,
+  Quotes,
+  Register,
+  Suppliers,
+} from "src/pages";
 import Protected from "./protected";
 
 export const router = createBrowserRouter([
@@ -25,6 +34,22 @@ export const router = createBrowserRouter([
           {
             path: "dashboard",
             element: <Dashboard />,
+          },
+          {
+            path: "products",
+            element: <Products />,
+          },
+          {
+            path: "quotes",
+            element: <Quotes />,
+          },
+          {
+            path: "suppliers",
+            element: <Suppliers />,
+          },
+          {
+            path: "contacts",
+            element: <Contacts />,
           },
         ],
       },

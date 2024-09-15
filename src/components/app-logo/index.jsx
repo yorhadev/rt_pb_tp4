@@ -1,8 +1,8 @@
 import { Box, Typography } from "@mui/material";
 
-export default function AppLogo() {
+export default function AppLogo(props) {
   return (
-    <Box>
+    <Box {...props} sx={{ cursor: "pointer" }}>
       <Typography component="p" variant="h6">
         <Typography component="span" color="primary">
           GENERICO

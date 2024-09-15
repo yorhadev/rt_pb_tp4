@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 export default function AppLayout() {
   return (
-    <div>
+    <div id="app_layout">
       <AppNavbar />
       <Outlet />
     </div>

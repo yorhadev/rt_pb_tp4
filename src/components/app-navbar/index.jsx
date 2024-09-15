@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppLogo } from "src/components/";
 
 const menuItems = [
@@ -24,12 +25,13 @@ export default function AppNavbar() {
   const [open, setOpen] = useState(false);
   const handleOnOpen = () => setOpen(true);
   const handleOnClose = () => setOpen(false);
+  const navigate = useNavigate();
 
   return (
     <AppBar className={styles.app_navbar}>
       <Box className={styles.app_navbar_container}>
         <Toolbar className={styles.app_navbar_toolbar}>
-          <AppLogo />
+          <AppLogo onClick={(e) => navigate("/dashboard")} />
           <Box className={styles.app_navbar_mobile}>
             <Button
               aria-label="menu"
@@ -41,11 +43,11 @@ export default function AppNavbar() {
             <Drawer anchor="right" open={open} onClose={handleOnClose}>
               <Box minWidth="60dvw" padding="1rem">
                 <Box textAlign="center">
-                  <AppLogo />
+                  <AppLogo onClick={(e) => navigate("/dashboard")} />
                   <Divider sx={{ margin: "1rem 0" }} />
                 </Box>
                 {menuItems.map((item) => (
-                  <MenuItem key={item.id}>
+                  <MenuItem key={item.id} onClick={(e) => navigate(item.path)}>
                     <Typography color="textPrimary">{item.name}</Typography>
                   </MenuItem>
                 ))}
@@ -64,7 +66,7 @@ export default function AppNavbar() {
           </Box>
           <Box className={styles.app_navbar_desktop}>
             {menuItems.map((item) => (
-              <MenuItem key={item.id}>
+              <MenuItem key={item.id} onClick={(e) => navigate(item.path)}>
                 <Typography color="textPrimary" component="span">
                   {item.name}
                 </Typography>
