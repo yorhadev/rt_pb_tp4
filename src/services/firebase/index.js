@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -16,6 +16,28 @@ class FirebaseService {
     this.app = initializeApp(firebaseConfig);
     this.auth = getAuth(this.app);
     this.db = getFirestore(this.app);
+  }
+
+  async signIn(email, password) {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        this.auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      return {
+        code: 200,
+        message: "user signed in successfully!",
+        data: user,
+      };
+    } catch (error) {
+      return {
+        code: error.code || 400,
+        message: error.message,
+        data: null,
+      };
+    }
   }
 }
 

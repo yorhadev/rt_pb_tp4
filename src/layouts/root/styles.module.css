@@ -20,26 +20,19 @@
 }
 
 .root_layout_fab_container {
-  --screen-width: var(--sm-screen-width);
   position: absolute;
   bottom: 0.5rem;
-  right: calc(50dvw - (var(--screen-width) / 2) + 0.5rem);
+  right: 0.5rem;
 }
 
 @media screen and (min-width: 48rem) {
   .root_layout_container {
     max-width: var(--md-screen-width);
   }
-  .root_layout_fab_container {
-    --screen-width: var(--md-screen-width);
-  }
 }
 
 @media screen and (min-width: 64rem) {
   .root_layout_container {
     max-width: var(--lg-screen-width);
-  }
-  .root_layout_fab_container {
-    --screen-width: var(--lg-screen-width);
   }
 }

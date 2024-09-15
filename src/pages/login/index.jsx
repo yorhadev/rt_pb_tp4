@@ -1,8 +1,12 @@
 import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import styles from "./styles.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useEmailPattern } from "src/composables/patterns";
+import { firebaseService } from "src/services/firebase";
+import { useContext } from "react";
+import { AuthContext } from "src/contexts/auth";
+import { SnackbarContext } from "src/contexts/snackbar";
 
 export default function Login() {
   const {
@@ -10,7 +14,20 @@ export default function Login() {
     register,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const [user, setUser] = useContext(AuthContext);
+  const [_, setSnack, setSeverity] = useContext(SnackbarContext);
+  const navigate = useNavigate();
+  const onSubmit = async (data) => {
+    const response = await firebaseService.signIn(data.email, data.password);
+    if (response.code === 200) {
+      setUser(response.data);
+      setSeverity("success");
+      navigate("/dashboard");
+    } else {
+      setSeverity("error");
+    }
+    setSnack(response.message);
+  };
 
   return (
     <Box component="main" className={styles.login_container}>

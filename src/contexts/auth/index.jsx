@@ -9,8 +9,10 @@ export function AuthProvider({ children }) {
   const authenticated = useMemo(() => Boolean(user), [user]);
 
   useLayoutEffect(() => {
-    firebaseService.auth.onAuthStateChanged((authUser) => setUser(authUser));
-    setPending(false);
+    firebaseService.auth.onAuthStateChanged((authUser) => {
+      setUser(authUser);
+      setPending(false);
+    });
   }, [authenticated]);
 
   return (
