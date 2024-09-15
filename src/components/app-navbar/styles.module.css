@@ -1,0 +1,58 @@
+.app_navbar {
+  --Paper-overlay: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  margin-top: 1rem;
+}
+
+.app_navbar_container {
+  margin-inline: auto;
+  max-width: 22.5rem;
+  min-width: 22.5rem;
+  padding-inline: 0.5rem;
+  width: 100%;
+}
+
+.app_navbar_toolbar {
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(24px);
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 0 1px rgba(85, 166, 246, 0.1),
+    1px 1.5px 2px -1px rgba(85, 166, 246, 0.15),
+    4px 4px 12px -2.5px rgba(85, 166, 246, 0.15);
+  min-height: 56px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app_navbar_mobile {
+  display: block;
+}
+
+.app_navbar_desktop {
+  display: none;
+}
+
+@media screen and (min-width: 48rem) {
+  .app_navbar_container {
+    max-width: var(--md-screen-width);
+  }
+}
+
+@media screen and (min-width: 64rem) {
+  .app_navbar_container {
+    max-width: var(--lg-screen-width);
+  }
+  .app_navbar_toolbar {
+    justify-content: unset;
+    gap: 1rem;
+  }
+  .app_navbar_mobile {
+    display: none;
+  }
+  .app_navbar_desktop {
+    display: flex;
+  }
+}
