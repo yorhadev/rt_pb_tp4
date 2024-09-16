@@ -29,6 +29,7 @@ import { firebaseService } from "src/services/firebase";
 import { SnackbarContext } from "src/contexts/snackbar";
 import { useNumberPattern } from "src/composables/patterns";
 import { useNavigate } from "react-router-dom";
+import { useExportToCSV } from "src/composables/exports";
 
 export default function PurchaseRequests() {
   const {
@@ -194,16 +195,27 @@ export default function PurchaseRequests() {
   return (
     <Box paddingTop="8rem">
       <Card sx={{ padding: "1rem" }}>
-        <Typography component="h1" fontWeight="500">
-          Purchase Requests
-          <Typography
-            component="span"
-            color="textSecondary"
-            sx={{ marginLeft: "0.25rem" }}
-          >
-            {purchaseRequestId && "*update (clear to cancel)"}
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Typography component="h1" fontWeight="500">
+            Purchase Requests
+            <Typography
+              component="span"
+              color="textSecondary"
+              sx={{ marginLeft: "0.25rem" }}
+            >
+              {purchaseRequestId && "*update (clear to cancel)"}
+            </Typography>
           </Typography>
-        </Typography>
+          <Box>
+            <Button
+              color="secondary"
+              variant="contained"
+              onClick={(e) => useExportToCSV(purchaseRequests)}
+            >
+              Export
+            </Button>
+          </Box>
+        </Box>
         <Divider sx={{ margin: "1rem 0 1.5rem" }} />
         <Box
           className={styles.form_container}
