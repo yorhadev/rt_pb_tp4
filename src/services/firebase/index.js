@@ -17,6 +17,7 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
+import { cacheService } from "../cache";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -83,6 +84,7 @@ class FirebaseService {
 
   async createDoc(path, documentData) {
     try {
+      cacheService.clearCache(path);
       const collectionReference = collection(this.db, path);
       const data = {
         ...documentData,
@@ -109,6 +111,7 @@ class FirebaseService {
 
   async createDocById(path, documentId, documentData) {
     try {
+      cacheService.clearCache(path);
       const documentReference = doc(this.db, path, documentId);
       const data = {
         ...documentData,
@@ -135,6 +138,8 @@ class FirebaseService {
 
   async findAllDocs(path) {
     try {
+      const cacheData = cacheService.getCache(path);
+      if (cacheData) return cacheData;
       const documents = [];
       const collectionReference = collection(this.db, path);
       const q = query(collectionReference, orderBy("submittedDate"));
@@ -147,11 +152,13 @@ class FirebaseService {
         };
         documents.push(documentData);
       });
-      return {
+      const response = {
         code: 200,
         message: `[${path}] retrieved successfully!`,
         data: documents,
       };
+      cacheService.setCache(path, response);
+      return response;
     } catch (error) {
       return {
         code: error.code || 400,
@@ -163,6 +170,7 @@ class FirebaseService {
 
   async updateDocById(path, documentId, documentData) {
     try {
+      cacheService.clearCache(path);
       const documentReference = doc(this.db, path, documentId);
       const data = {
         ...documentData,
@@ -189,6 +197,7 @@ class FirebaseService {
 
   async deleteDocById(path, documentId) {
     try {
+      cacheService.clearCache(path);
       const documentReference = doc(this.db, path, documentId);
       await deleteDoc(documentReference);
       return {
