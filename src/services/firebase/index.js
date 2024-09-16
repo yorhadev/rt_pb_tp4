@@ -57,6 +57,23 @@ class FirebaseService {
     }
   }
 
+  async signOut() {
+    try {
+      await this.auth.signOut();
+      return {
+        code: 200,
+        message: "user signed out successfully!",
+        data: null,
+      };
+    } catch (error) {
+      return {
+        code: error.code || 400,
+        message: error.message,
+        data: null,
+      };
+    }
+  }
+
   async createUser(name, email, password, role = "collaborator") {
     try {
       const userCredential = await createUserWithEmailAndPassword(
