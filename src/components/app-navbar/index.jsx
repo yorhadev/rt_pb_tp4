@@ -66,14 +66,14 @@ export default function AppNavbar() {
 
   const navigate = useNavigate();
 
-  const [, setUser] = useContext(AuthContext);
+  const [, setUser] = useContext(AuthContext) || [];
 
-  const [, setSnack, setSeverity] = useContext(SnackbarContext);
+  const [, setSnack, setSeverity] = useContext(SnackbarContext) || [];
 
   const [userRole, setUserRole] = useState(null);
 
   const getCurrentUserRole = async () => {
-    const userId = firebaseService.auth.currentUser.uid;
+    const userId = firebaseService.auth.currentUser?.uid;
     const response = await firebaseService.findOneDoc("users", userId);
     if (response.code !== 200) return setUserRole("collaborator");
     return setUserRole(response.data?.role || "collaborator");
