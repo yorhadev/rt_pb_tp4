@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "src/contexts/auth";
 
 export default function Protected({ component }) {
-  const [user, _, pending] = useContext(AuthContext);
+  const [user, _, pending] = useContext(AuthContext) || [];
   const authenticated = useMemo(() => Boolean(user), [user]);
   const navigate = useNavigate();
 
