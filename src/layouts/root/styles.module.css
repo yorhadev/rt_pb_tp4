@@ -1,0 +1,38 @@
+:root {
+  --sm-screen-width: 22.5rem;
+  --md-screen-width: 48rem;
+  --lg-screen-width: 64rem;
+}
+
+.root_layout {
+  min-height: 100dvh;
+  overflow-x: auto;
+  position: relative;
+}
+
+.root_layout_container {
+  border: 1px solid red;
+  margin-inline: auto;
+  min-width: var(--sm-screen-width);
+  max-width: var(--sm-screen-width);
+  min-height: inherit;
+  padding-inline: 1rem;
+}
+
+.root_layout_fab_container {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+}
+
+@media screen and (min-width: 48rem) {
+  .root_layout_container {
+    max-width: var(--md-screen-width);
+  }
+}
+
+@media screen and (min-width: 64rem) {
+  .root_layout_container {
+    max-width: var(--lg-screen-width);
+  }
+}

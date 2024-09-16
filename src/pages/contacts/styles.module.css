@@ -1,0 +1,24 @@
+.form_container {
+  display: grid;
+  gap: 2rem;
+}
+
+.form_fields {
+  display: grid;
+  gap: 1rem;
+}
+
+.form_controls {
+  display: grid;
+  gap: 1rem;
+}
+
+@media screen and (min-width: 48rem) {
+  .form_fields {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .form_controls {
+    grid-template-columns: repeat(2, 5.375rem);
+    justify-content: flex-end;
+  }
+}

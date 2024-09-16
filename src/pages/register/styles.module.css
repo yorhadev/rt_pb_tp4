@@ -1,0 +1,34 @@
+.register_container {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  min-height: inherit;
+}
+
+.register_content_container {
+  display: grid;
+  gap: 3rem;
+  max-width: 20.375rem;
+  width: 100%;
+}
+
+.register_header_container {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.register_form_container {
+  display: grid;
+  gap: 1rem;
+}
+
+.register_form_container button {
+  margin-top: 1rem;
+}
+
+.register_nav_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
