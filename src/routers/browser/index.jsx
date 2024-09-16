@@ -6,6 +6,7 @@ import {
   Home,
   Login,
   Products,
+  PurchaseRequests,
   Quotes,
   Register,
   Suppliers,
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
           {
             path: "contacts",
             element: <Contacts />,
+          },
+          {
+            path: "purchase-requests",
+            element: <PurchaseRequests />,
           },
         ],
       },

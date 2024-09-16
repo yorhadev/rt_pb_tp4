@@ -9,6 +9,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   getFirestore,
   orderBy,
@@ -16,6 +17,7 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { cacheService } from "../cache";
 
@@ -153,6 +155,26 @@ class FirebaseService {
     }
   }
 
+  async findOneDoc(path, documentId) {
+    try {
+      const documentReference = doc(this.db, path, documentId);
+      const documentSnapshot = await getDoc(documentReference);
+      if (!documentSnapshot.exists()) throw new Error("No such document!");
+      const document = documentSnapshot.data();
+      return {
+        code: 200,
+        message: `[${path}] retrieved successfully!`,
+        data: document,
+      };
+    } catch (error) {
+      return {
+        code: error.code || 400,
+        message: error.message,
+        data: null,
+      };
+    }
+  }
+
   async findAllDocs(path) {
     try {
       const cacheData = cacheService.getCache(path);
@@ -176,6 +198,35 @@ class FirebaseService {
       };
       cacheService.setCache(path, response);
       return response;
+    } catch (error) {
+      return {
+        code: error.code || 400,
+        message: error.message,
+        data: null,
+      };
+    }
+  }
+
+  async findAllDocsByFilter(path, whereFilter = []) {
+    try {
+      const documents = [];
+      const [param, operator, value] = whereFilter;
+      const collectionReference = collection(firebaseService.db, path);
+      const q = query(collectionReference, where(param, operator, value));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((document) => {
+        const documentData = {
+          id: document.id,
+          ...document.data(),
+          submittedDate: document.data().submittedDate.toDate(),
+        };
+        documents.push(documentData);
+      });
+      return {
+        code: 200,
+        message: `[${path}] retrieved successfully!`,
+        data: documents,
+      };
     } catch (error) {
       return {
         code: error.code || 400,

@@ -22,6 +22,7 @@ const menuItems = [
   { id: 2, name: "Quotes", path: "quotes" },
   { id: 3, name: "Suppliers", path: "suppliers" },
   { id: 4, name: "Contacts", path: "contacts" },
+  { id: 5, name: "Purchase Requests", path: "purchase-requests" },
 ];
 
 export default function AppNavbar() {
