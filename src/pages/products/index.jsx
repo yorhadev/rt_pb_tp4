@@ -53,17 +53,20 @@ export default function Products() {
     setKey((state) => state + 1);
   };
 
+  const formatData = (data) => {
+    const formattedData = structuredClone(data);
+    delete formattedData.id;
+    delete formattedData.submittedDate;
+    return formattedData;
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
   const createDocument = async (data) => {
     setLoading(true);
-    const documentData = {
-      name: data.name,
-      sku: data.sku,
-      details: data.details,
-    };
+    const documentData = formatData(data);
     const response = await firebaseService.createDoc("products", documentData);
     setSeverity(response.code === 200 ? "success" : "error");
     setSnack(response.message);
@@ -79,11 +82,7 @@ export default function Products() {
 
   const updateDocument = async (data) => {
     setLoading(true);
-    const documentData = {
-      name: data.name,
-      sku: data.sku,
-      details: data.details,
-    };
+    const documentData = formatData(data);
     const response = await firebaseService.updateDocById(
       "products",
       productId,
@@ -127,7 +126,16 @@ export default function Products() {
   return (
     <Box paddingTop="8rem">
       <Card sx={{ padding: "1rem" }}>
-        <Typography>Products</Typography>
+        <Typography component="h1" fontWeight="500">
+          Products
+          <Typography
+            component="span"
+            color="textSecondary"
+            sx={{ marginLeft: "0.25rem" }}
+          >
+            {productId && "*update (clear to cancel)"}
+          </Typography>
+        </Typography>
         <Divider sx={{ margin: "1rem 0 1.5rem" }} />
         <Box
           className={styles.form_container}
@@ -139,7 +147,7 @@ export default function Products() {
           <Box className={styles.form_fields}>
             <TextField
               key={`name-${key}`}
-              label="name"
+              label="Name"
               size="small"
               {...register("name", { required: true })}
               helperText={errors.name && "Field is required"}
@@ -148,7 +156,7 @@ export default function Products() {
             />
             <TextField
               key={`sku-${key}`}
-              label="sku"
+              label="Sku"
               size="small"
               {...register("sku", { required: true })}
               helperText={errors.sku && "Field is required"}
@@ -157,7 +165,7 @@ export default function Products() {
             />
             <TextField
               key={`details-${key}`}
-              label="details"
+              label="Details"
               size="small"
               {...register("details", { required: true })}
               helperText={errors.details && "Field is required"}
