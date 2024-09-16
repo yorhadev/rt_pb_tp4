@@ -1,7 +1,7 @@
 import styles from "./styles.module.css";
 import { Box, createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import { ThemeControlFab } from "src/components";
+import { AppThemeFab } from "src/components";
 import { AuthProvider } from "src/contexts/auth";
 import { SnackbarProvider } from "src/contexts/snackbar";
 
@@ -21,7 +21,7 @@ export default function RootLayout() {
               <Outlet />
             </Box>
             <Box className={styles.root_layout_fab_container}>
-              <ThemeControlFab />
+              <AppThemeFab />
             </Box>
           </Box>
         </SnackbarProvider>

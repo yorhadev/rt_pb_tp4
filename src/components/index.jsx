@@ -1,5 +1,5 @@
 import AppLogo from "./app-logo";
 import AppNavbar from "./app-navbar";
-import ThemeControlFab from "./theme-control-fab";
+import AppThemeFab from "./app-theme-fab";
 
-export { AppLogo, AppNavbar, ThemeControlFab };
+export { AppLogo, AppNavbar, AppThemeFab };
