@@ -10,6 +10,7 @@ import {
   Quotes,
   Register,
   Suppliers,
+  Users,
 } from "src/pages";
 import Protected from "./protected";
 import Restricted from "./restricted";
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
           {
             path: "purchase-requests",
             element: <PurchaseRequests />,
+          },
+          {
+            path: "users",
+            element: <Restricted component={<Users />} />,
           },
         ],
       },

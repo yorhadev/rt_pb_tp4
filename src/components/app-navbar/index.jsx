@@ -49,6 +49,12 @@ const menuItems = [
     path: "purchase-requests",
     allowedRoles: ["admin", "collaborator"],
   },
+  {
+    id: 6,
+    name: "Users",
+    path: "users",
+    allowedRoles: ["admin"],
+  },
 ];
 
 export default function AppNavbar() {

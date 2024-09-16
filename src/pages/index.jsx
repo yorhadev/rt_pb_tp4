@@ -7,6 +7,7 @@ import PurchaseRequests from "./purchase-requests";
 import Quotes from "./quotes";
 import Register from "./register";
 import Suppliers from "./suppliers";
+import Users from "./users";
 
 export {
   Contacts,
@@ -18,4 +19,5 @@ export {
   Quotes,
   Register,
   Suppliers,
+  Users,
 };
