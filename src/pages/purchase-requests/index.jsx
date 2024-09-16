@@ -18,6 +18,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TableSortLabel,
   TextField,
   Tooltip,
   Typography,
@@ -61,6 +62,8 @@ export default function PurchaseRequests() {
   const [page, setPage] = useState(0);
 
   const rowsPerPage = 10;
+
+  const [order, setOrder] = useState("asc");
 
   const updateFormFields = (data) => {
     Object.entries(data).map(([prop, value]) => setValue(prop, value));
@@ -171,6 +174,17 @@ export default function PurchaseRequests() {
     setKey((state) => state + 1);
   };
 
+  const createSortHandler = () => {
+    const isAsc = order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+  };
+
+  const getComparator = (order) => {
+    return order === "desc"
+      ? (a, b) => new Date(b.submittedDate) - new Date(a.submittedDate)
+      : (a, b) => new Date(a.submittedDate) - new Date(b.submittedDate);
+  };
+
   useEffect(() => {
     readDocuments("purchaseRequests");
     readDocuments("products");
@@ -263,12 +277,21 @@ export default function PurchaseRequests() {
                 <TableCell>Description</TableCell>
                 <TableCell>Quantity</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell sortDirection={order}>
+                  <TableSortLabel
+                    active={true}
+                    direction={order}
+                    onClick={createSortHandler}
+                  >
+                    Date
+                  </TableSortLabel>
+                </TableCell>
                 <TableCell align="center">@</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {purchaseRequests
+                .sort(getComparator(order))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((purchaseRequest) => (
                   <TableRow key={purchaseRequest.id}>
