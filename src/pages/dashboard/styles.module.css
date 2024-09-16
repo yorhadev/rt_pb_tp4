@@ -1,0 +1,6 @@
+.dashboard_container {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  min-height: inherit;
+}
