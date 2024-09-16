@@ -195,7 +195,10 @@ export default function Quotes() {
         (quoteId) => quoteId !== quote.id
       );
     }
-    if (purchaseRequest.quoteIds.length <= 2) {
+    if (purchaseRequest.quoteIds.length <= 0) {
+      purchaseRequest.status = "open";
+    }
+    if (purchaseRequest.quoteIds.length >= 1) {
       purchaseRequest.status = "in quotation";
     }
     if (purchaseRequest.quoteIds.length >= 3) {
