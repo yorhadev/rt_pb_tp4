@@ -109,8 +109,9 @@ class FirebaseService {
         ...documentData,
         submittedDate: Timestamp.fromDate(new Date()),
       };
-      await addDoc(collectionReference, data);
+      const documentReference = await addDoc(collectionReference, data);
       const document = {
+        id: documentReference.id,
         ...data,
         submittedDate: data.submittedDate.toDate(),
       };

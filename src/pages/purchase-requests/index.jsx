@@ -74,6 +74,7 @@ export default function PurchaseRequests() {
     delete formattedData.id;
     delete formattedData.submittedDate;
     Object.assign(formattedData, { status: "open" });
+    Object.assign(formattedData, { quoteIds: [] });
     return formattedData;
   };
 
@@ -126,14 +127,26 @@ export default function PurchaseRequests() {
     resetForm();
   };
 
-  const deleteDocument = async (documentId) => {
+  const deleteDocument = async (data) => {
     setLoading(true);
+    const documentId = data.id;
     const response = await firebaseService.deleteDocById(
       "purchaseRequests",
       documentId
     );
-    setSeverity(response.code === 200 ? "success" : "error");
-    setSnack(response.message);
+    const quoteRequests = [];
+    data.quoteIds.map((quoteId) =>
+      quoteRequests.push(firebaseService.deleteDocById("quotes", quoteId))
+    );
+    const quoteResponses = await Promise.all(quoteRequests);
+    console.log(quoteResponses);
+    if (quoteResponses.find((resp) => resp.code !== 200)) {
+      setSeverity("error");
+      setSnack("failed to delete quotes linked to purchase request!");
+    } else {
+      setSeverity(response.code === 200 ? "success" : "error");
+      setSnack(response.message);
+    }
     setLoading(false);
     setRender((state) => state + 1);
     resetForm();
@@ -286,7 +299,7 @@ export default function PurchaseRequests() {
                         </Tooltip>
                         <Tooltip title="Delete">
                           <IconButton
-                            onClick={() => deleteDocument(purchaseRequest.id)}
+                            onClick={() => deleteDocument(purchaseRequest)}
                           >
                             <Delete />
                           </IconButton>
