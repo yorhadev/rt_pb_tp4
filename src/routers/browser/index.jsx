@@ -12,6 +12,7 @@ import {
   Suppliers,
 } from "src/pages";
 import Protected from "./protected";
+import Restricted from "./restricted";
 
 export const router = createBrowserRouter([
   {
@@ -38,19 +39,19 @@ export const router = createBrowserRouter([
           },
           {
             path: "products",
-            element: <Products />,
+            element: <Restricted component={<Products />} />,
           },
           {
             path: "quotes",
-            element: <Quotes />,
+            element: <Restricted component={<Quotes />} />,
           },
           {
             path: "suppliers",
-            element: <Suppliers />,
+            element: <Restricted component={<Suppliers />} />,
           },
           {
             path: "contacts",
-            element: <Contacts />,
+            element: <Restricted component={<Contacts />} />,
           },
           {
             path: "purchase-requests",
