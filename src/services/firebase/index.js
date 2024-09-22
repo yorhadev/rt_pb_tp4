@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { deleteApp, initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -45,6 +45,16 @@ class FirebaseService {
         password
       );
       const user = userCredential.user;
+      const response = await this.findOneDoc("users", user.uid);
+      if (response.code !== 200) {
+        await this.auth.signOut();
+        throw new Error("cannot find user in users collection");
+      }
+      const status = response.data?.status || "inactive";
+      if (status !== "active") {
+        await this.auth.signOut();
+        throw new Error("user is inactive, please contact administration");
+      }
       return {
         code: 200,
         message: "user signed in successfully!",
@@ -76,7 +86,13 @@ class FirebaseService {
     }
   }
 
-  async createUser(name, email, password, role = "collaborator") {
+  async createUser(
+    name,
+    email,
+    password,
+    role = "collaborator",
+    status = "active"
+  ) {
     try {
       const userCredential = await createUserWithEmailAndPassword(
         this.auth,
@@ -84,7 +100,7 @@ class FirebaseService {
         password
       );
       const user = userCredential.user;
-      const userData = { name, email, role };
+      const userData = { name, email, password, role, status };
       const response = await this.createDocById("users", user.uid, userData);
       if (response.code !== 200) throw response.message;
       return {
@@ -98,6 +114,72 @@ class FirebaseService {
         message: error.message,
         data: null,
       };
+    }
+  }
+
+  async createUserByAdmin(
+    name,
+    email,
+    password,
+    role = "collaborator",
+    status = "active"
+  ) {
+    const tempApp = initializeApp(firebaseConfig, "tempApp");
+    const tempAuth = getAuth(tempApp);
+    try {
+      cacheService.clearCache("users");
+      const userCredential = await createUserWithEmailAndPassword(
+        tempAuth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      const userData = { name, email, password, role, status };
+      const response = await this.createDocById("users", user.uid, userData);
+      if (response.code !== 200) throw response.message;
+      return {
+        code: 200,
+        message: "user created successfully!",
+        data: user,
+      };
+    } catch (error) {
+      return {
+        code: error.code || 400,
+        message: error.message,
+        data: null,
+      };
+    } finally {
+      await deleteApp(tempApp);
+    }
+  }
+
+  async deleteUserByAdmin(documentId, email, password) {
+    const tempApp = initializeApp(firebaseConfig, "tempApp");
+    const tempAuth = getAuth(tempApp);
+    try {
+      cacheService.clearCache("users");
+      const documentReference = doc(this.db, "users", documentId);
+      await deleteDoc(documentReference);
+      const userCredential = await signInWithEmailAndPassword(
+        tempAuth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      await user.delete();
+      return {
+        code: 200,
+        message: `[${email}] deleted successfully!`,
+        data: null,
+      };
+    } catch (error) {
+      return {
+        code: error.code || 400,
+        message: error.message,
+        data: null,
+      };
+    } finally {
+      await deleteApp(tempApp);
     }
   }
 

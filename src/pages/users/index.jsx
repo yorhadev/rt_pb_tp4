@@ -22,7 +22,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { firebaseService } from "src/services/firebase";
 import { SnackbarContext } from "src/contexts/snackbar";
@@ -51,14 +51,22 @@ export default function Users() {
 
   const [role, setRole] = useState("");
 
+  const [status, setStatus] = useState("");
+
   const [page, setPage] = useState(0);
 
   const rowsPerPage = 10;
+
+  const usersList = useMemo(
+    () => [...users].filter((user) => user.email !== "admin@admin.com"),
+    [users]
+  );
 
   const updateFormFields = (data) => {
     Object.entries(data).map(([prop, value]) => setValue(prop, value));
     setUserId(data.id);
     setRole(data.role);
+    setStatus(data.status);
     setKey((state) => state + 1);
   };
 
@@ -73,15 +81,23 @@ export default function Users() {
     setPage(newPage);
   };
 
-  const handleChangeSelect = (event) => {
+  const handleChangeRole = (event) => {
     setRole(event.target.value);
+  };
+
+  const handleChangeStatus = (event) => {
+    setStatus(event.target.value);
   };
 
   const createDocument = async (data) => {
     setLoading(true);
-    const documentData = formatData(data);
-    const response = await firebaseService.createDoc("users", documentData);
-    firebaseService.auth.createUser();
+    const response = await firebaseService.createUserByAdmin(
+      data.name,
+      data.email,
+      data.password,
+      data.role,
+      data.status
+    );
     setSeverity(response.code === 200 ? "success" : "error");
     setSnack(response.message);
     setLoading(false);
@@ -109,6 +125,20 @@ export default function Users() {
     resetForm();
   };
 
+  const deleteDocument = async (documentId, email, password) => {
+    setLoading(true);
+    const response = await firebaseService.deleteUserByAdmin(
+      documentId,
+      email,
+      password
+    );
+    setSeverity(response.code === 200 ? "success" : "error");
+    setSnack(response.message);
+    setLoading(false);
+    setRender((state) => state + 1);
+    resetForm();
+  };
+
   const onSubmit = async (data) => {
     const request = userId ? updateDocument : createDocument;
     await request(data);
@@ -118,6 +148,7 @@ export default function Users() {
     reset();
     setUserId(null);
     setRole("");
+    setStatus("");
     setKey((state) => state + 1);
   };
 
@@ -154,8 +185,7 @@ export default function Users() {
               {...register("name", { required: true })}
               helperText={errors.name && "Field is required"}
               error={Boolean(errors.name)}
-              disabled={true}
-              slotProps={{ input: { readOnly: true } }}
+              disabled={loading}
             />
             <TextField
               key={`email-${key}`}
@@ -167,10 +197,23 @@ export default function Users() {
               })}
               helperText={errors.email && "Field should be a valid e-mail"}
               error={Boolean(errors.email)}
-              disabled={true}
-              slotProps={{ input: { readOnly: true } }}
+              disabled={!!userId || loading}
             />
-            <FormControl size="small" error={Boolean(errors.role)}>
+            <TextField
+              key={`password-${key}`}
+              label="Password"
+              size="small"
+              type="password"
+              {...register("password", { required: true, minLength: 6 })}
+              helperText={errors.password && "Field should be a valid password"}
+              error={Boolean(errors.password)}
+              disabled={!!userId || loading}
+            />
+            <FormControl
+              size="small"
+              error={Boolean(errors.role)}
+              disabled={loading}
+            >
               <InputLabel id="roles">Roles</InputLabel>
               <Select
                 labelId="roles"
@@ -178,7 +221,7 @@ export default function Users() {
                 size="small"
                 {...register("role", { required: true })}
                 value={role}
-                onChange={handleChangeSelect}
+                onChange={handleChangeRole}
               >
                 <MenuItem value="">
                   <em>None</em>
@@ -192,6 +235,34 @@ export default function Users() {
               </Select>
               <FormHelperText>
                 {errors.role && "Field is required"}
+              </FormHelperText>
+            </FormControl>
+            <FormControl
+              size="small"
+              error={Boolean(errors.status)}
+              disabled={loading}
+            >
+              <InputLabel id="status">Status</InputLabel>
+              <Select
+                labelId="status"
+                label="Status"
+                size="small"
+                {...register("status", { required: true })}
+                value={status}
+                onChange={handleChangeStatus}
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value="active">
+                  <span>Active</span>
+                </MenuItem>
+                <MenuItem value="inactive">
+                  <span>Inactive</span>
+                </MenuItem>
+              </Select>
+              <FormHelperText>
+                {errors.status && "Field is required"}
               </FormHelperText>
             </FormControl>
           </Box>
@@ -213,18 +284,20 @@ export default function Users() {
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Role</TableCell>
+                <TableCell>Status</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell align="center">@</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {users
+              {usersList
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.role}</TableCell>
+                    <TableCell>{user.status}</TableCell>
                     <TableCell>
                       {user.submittedDate.toLocaleDateString()}
                     </TableCell>
@@ -233,6 +306,15 @@ export default function Users() {
                         <Tooltip title="Update">
                           <IconButton onClick={() => updateFormFields(user)}>
                             <Update />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Update">
+                          <IconButton
+                            onClick={() =>
+                              deleteDocument(user.id, user.email, user.password)
+                            }
+                          >
+                            <Delete />
                           </IconButton>
                         </Tooltip>
                       </Box>
