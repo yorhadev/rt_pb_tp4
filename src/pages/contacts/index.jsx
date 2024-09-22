@@ -1,4 +1,4 @@
-import { Delete, Update } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import styles from "./styles.module.css";
 import {
   Box,
@@ -250,12 +250,16 @@ export default function Contacts() {
                     <TableCell>
                       <Box display="flex" justifyContent="center">
                         <Tooltip title="Update">
-                          <IconButton onClick={() => updateFormFields(contact)}>
-                            <Update />
+                          <IconButton
+                            aria-label="update"
+                            onClick={() => updateFormFields(contact)}
+                          >
+                            <Edit />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
                           <IconButton
+                            aria-label="delete"
                             onClick={() => deleteDocument(contact.id)}
                           >
                             <Delete />

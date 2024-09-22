@@ -1,4 +1,4 @@
-import { Delete, Update } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import styles from "./styles.module.css";
 import {
   Box,
@@ -363,12 +363,18 @@ export default function Quotes() {
                     <TableCell>
                       <Box display="flex" justifyContent="center">
                         <Tooltip title="Update">
-                          <IconButton onClick={() => updateFormFields(quote)}>
-                            <Update />
+                          <IconButton
+                            aria-label="update"
+                            onClick={() => updateFormFields(quote)}
+                          >
+                            <Edit />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton onClick={() => deleteDocument(quote)}>
+                          <IconButton
+                            aria-label="delete"
+                            onClick={() => deleteDocument(quote)}
+                          >
                             <Delete />
                           </IconButton>
                         </Tooltip>

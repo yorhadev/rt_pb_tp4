@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { Delete, ThumbUp, Update } from "@mui/icons-material";
+import { Delete, Edit, Launch } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -320,20 +320,25 @@ export default function PurchaseRequests() {
                       <Box display="flex" justifyContent="center">
                         {userRole === "admin" && (
                           <Tooltip title="Fulfill">
-                            <IconButton onClick={() => navigate("/quotes")}>
-                              <ThumbUp />
+                            <IconButton
+                              aria-label="fulfill"
+                              onClick={() => navigate("/quotes")}
+                            >
+                              <Launch />
                             </IconButton>
                           </Tooltip>
                         )}
                         <Tooltip title="Update">
                           <IconButton
+                            aria-label="update"
                             onClick={() => updateFormFields(purchaseRequest)}
                           >
-                            <Update />
+                            <Edit />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
                           <IconButton
+                            aria-label="delete"
                             onClick={() => deleteDocument(purchaseRequest)}
                           >
                             <Delete />
