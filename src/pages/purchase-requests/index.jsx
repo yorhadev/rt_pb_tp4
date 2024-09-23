@@ -208,6 +208,19 @@ export default function PurchaseRequests() {
     }
   };
 
+  const handleExportToCSV = async (purchaseRequestId) => {
+    const bypass = ["quotes"];
+    const response = await firebaseService.findAllDocsRestricted(
+      "quotes",
+      bypass
+    );
+    const quotes = Array.isArray(response.data) ? response.data : [];
+    const purchaseRequestQuotes = quotes.filter(
+      (quote) => quote.purchaseRequestId === purchaseRequestId
+    );
+    useExportToCSV(purchaseRequestQuotes);
+  };
+
   useEffect(() => {
     readDocuments("purchaseRequests");
     readDocuments("products");
@@ -233,7 +246,8 @@ export default function PurchaseRequests() {
             <Button
               color="secondary"
               variant="contained"
-              onClick={(e) => useExportToCSV(purchaseRequests)}
+              disabled={!purchaseRequestId || loading}
+              onClick={(e) => handleExportToCSV(purchaseRequestId)}
             >
               Export
             </Button>
