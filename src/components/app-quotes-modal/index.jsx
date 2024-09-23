@@ -207,7 +207,7 @@ export default function AppQuotesModal({ open, handleClose, handleRender }) {
       purchaseRequest.status = "in quotation";
     }
     if (purchaseRequest.quoteIds.length >= 3) {
-      purchaseRequest.status = "closed";
+      purchaseRequest.status = "quoted";
     }
     if (purchaseRequest.quoteIds.length >= 4) {
       return {
