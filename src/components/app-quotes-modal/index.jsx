@@ -29,7 +29,7 @@ import { firebaseService } from "src/services/firebase";
 import { SnackbarContext } from "src/contexts/snackbar";
 import { useNumberPattern } from "src/composables/patterns";
 
-export default function AppQuotesModal({ open, handleClose }) {
+export default function AppQuotesModal({ open, handleClose, handleRender }) {
   const {
     register,
     formState: { errors },
@@ -119,6 +119,7 @@ export default function AppQuotesModal({ open, handleClose }) {
       setSnack("cannot update purchase request after quote limit cap (3)!");
       setLoading(false);
       setRender((state) => state + 1);
+      handleRender((state) => state + 1);
       resetForm();
       return;
     }
@@ -133,6 +134,7 @@ export default function AppQuotesModal({ open, handleClose }) {
     }
     setLoading(false);
     setRender((state) => state + 1);
+    handleRender((state) => state + 1);
     resetForm();
   };
 
@@ -157,6 +159,7 @@ export default function AppQuotesModal({ open, handleClose }) {
     setSnack(response.message);
     setLoading(false);
     setRender((state) => state + 1);
+    handleRender((state) => state + 1);
     resetForm();
   };
 
@@ -174,6 +177,7 @@ export default function AppQuotesModal({ open, handleClose }) {
     }
     setLoading(false);
     setRender((state) => state + 1);
+    handleRender((state) => state + 1);
     resetForm();
   };
 

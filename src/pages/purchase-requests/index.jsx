@@ -391,7 +391,11 @@ export default function PurchaseRequests() {
           />
         </Box>
       </Card>
-      <AppQuotesModal open={open} handleClose={handleClose} />
+      <AppQuotesModal
+        open={open}
+        handleClose={handleClose}
+        handleRender={setRender}
+      />
     </Box>
   );
 }
