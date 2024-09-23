@@ -290,6 +290,46 @@ class FirebaseService {
     }
   }
 
+  async findAllDocsRestricted(path, bypass = []) {
+    try {
+      const user = this.auth.currentUser;
+      const usersResponse = await this.findOneDoc("users", user.uid);
+      if (usersResponse.code !== 200) {
+        await this.auth.signOut();
+        throw new Error("cannot find user in users collection");
+      }
+      const role = usersResponse.data?.role || "collaborator";
+      const documents = [];
+      const collectionReference = collection(this.db, path);
+      const filter =
+        role === "admin" || bypass.includes(path)
+          ? orderBy("submittedDate")
+          : where("userId", "==", String(user.uid));
+      const q = query(collectionReference, filter);
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((document) => {
+        const documentData = {
+          id: document.id,
+          ...document.data(),
+          submittedDate: document.data().submittedDate.toDate(),
+        };
+        documents.push(documentData);
+      });
+      const response = {
+        code: 200,
+        message: `[${path}] retrieved successfully!`,
+        data: documents,
+      };
+      return response;
+    } catch (error) {
+      return {
+        code: error.code || 400,
+        message: error.message,
+        data: null,
+      };
+    }
+  }
+
   async findAllDocsByFilter(path, whereFilter = []) {
     try {
       const documents = [];

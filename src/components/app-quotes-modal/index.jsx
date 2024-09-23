@@ -248,7 +248,7 @@ export default function AppQuotesModal({ open, handleClose }) {
     readDocuments("purchaseRequests");
     readDocuments("products");
     readDocuments("suppliers");
-  }, [render]);
+  }, [render, open]);
 
   return (
     <Dialog open={open} onClose={handleClose}>

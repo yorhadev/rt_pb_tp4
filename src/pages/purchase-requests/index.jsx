@@ -59,6 +59,8 @@ export default function PurchaseRequests() {
 
   const [products, setProducts] = useState([]);
 
+  const [users, setUsers] = useState([]);
+
   const [userRole, setUserRole] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -80,6 +82,8 @@ export default function PurchaseRequests() {
     const formattedData = structuredClone(data);
     delete formattedData.id;
     delete formattedData.submittedDate;
+    const userId = firebaseService.auth.currentUser.uid;
+    Object.assign(formattedData, { userId: userId });
     Object.assign(formattedData, { status: "open" });
     Object.assign(formattedData, { quoteIds: [] });
     return formattedData;
@@ -88,6 +92,11 @@ export default function PurchaseRequests() {
   const findProduct = (productId) => {
     const product = products.find((product) => product?.id === productId);
     return product?.name;
+  };
+
+  const findUser = (userId) => {
+    const user = users.find((user) => user?.id === userId);
+    return user.name;
   };
 
   const handleChangePage = (event, newPage) => {
@@ -113,10 +122,15 @@ export default function PurchaseRequests() {
   };
 
   const readDocuments = async (documentPath) => {
-    const response = await firebaseService.findAllDocs(documentPath);
+    const bypass = ["products", "users"];
+    const response = await firebaseService.findAllDocsRestricted(
+      documentPath,
+      bypass
+    );
     if (response.code !== 200) return;
     if (documentPath === "purchaseRequests") setPurchaseRequests(response.data);
     if (documentPath === "products") setProducts(response.data);
+    if (documentPath === "users") setUsers(response.data);
   };
 
   const updateDocument = async (data) => {
@@ -197,6 +211,7 @@ export default function PurchaseRequests() {
   useEffect(() => {
     readDocuments("purchaseRequests");
     readDocuments("products");
+    readDocuments("users");
     if (!userRole) getCurrentUserRole();
   }, [render]);
 
@@ -296,6 +311,7 @@ export default function PurchaseRequests() {
                 <TableCell>Product</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>Quantity</TableCell>
+                <TableCell>Username</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Quotes</TableCell>
                 <TableCell sortDirection={order}>
@@ -321,6 +337,7 @@ export default function PurchaseRequests() {
                     </TableCell>
                     <TableCell>{purchaseRequest.description}</TableCell>
                     <TableCell>{purchaseRequest.quantity}</TableCell>
+                    <TableCell>{findUser(purchaseRequest.userId)}</TableCell>
                     <TableCell>{purchaseRequest.status}</TableCell>
                     <TableCell>
                       {purchaseRequest.quoteIds?.length} / 3
