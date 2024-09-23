@@ -1,9 +1,10 @@
-import { Delete, Edit } from "@mui/icons-material";
+import { Close, Delete, Edit } from "@mui/icons-material";
 import styles from "./styles.module.css";
 import {
   Box,
   Button,
   Card,
+  Dialog,
   Divider,
   FormControl,
   FormHelperText,
@@ -28,7 +29,7 @@ import { firebaseService } from "src/services/firebase";
 import { SnackbarContext } from "src/contexts/snackbar";
 import { useNumberPattern } from "src/composables/patterns";
 
-export default function Quotes() {
+export default function AppQuotesModal({ open, handleClose }) {
   const {
     register,
     formState: { errors },
@@ -250,159 +251,178 @@ export default function Quotes() {
   }, [render]);
 
   return (
-    <Box paddingTop="8rem">
-      <Card sx={{ padding: "1rem" }}>
-        <Typography component="h1" fontWeight="500">
-          Quotes
-          <Typography
-            component="span"
-            color="textSecondary"
-            sx={{ marginLeft: "0.25rem" }}
+    <Dialog open={open} onClose={handleClose}>
+      <Box padding="1rem">
+        <Card sx={{ padding: "1rem" }}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
           >
-            {quoteId && "*update (clear to cancel)"}
-          </Typography>
-        </Typography>
-        <Divider sx={{ margin: "1rem 0 1.5rem" }} />
-        <Box
-          className={styles.form_container}
-          component="form"
-          autoComplete="off"
-          noValidate
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Box className={styles.form_fields}>
-            <FormControl size="small" error={Boolean(errors.purchaseRequestId)}>
-              <InputLabel id="purchaseRequests">Purchase Requests</InputLabel>
-              <Select
-                labelId="purchaseRequests"
-                label="Purchase Requests"
-                size="small"
-                {...register("purchaseRequestId", { required: true })}
-                value={purchaseRequestId}
-                onChange={handleChangePurchaseRequest}
+            <Typography component="h1" fontWeight="500">
+              Quotes
+              <Typography
+                component="span"
+                color="textSecondary"
+                sx={{ marginLeft: "0.25rem" }}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                {purchaseRequests.map((purchaseRequest) => (
-                  <MenuItem key={purchaseRequest.id} value={purchaseRequest.id}>
-                    {findProduct(purchaseRequest.productId)}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>
-                {errors.purchaseRequestId && "Field is required"}
-              </FormHelperText>
-            </FormControl>
-            <FormControl size="small" error={Boolean(errors.supplierId)}>
-              <InputLabel id="suppliers">Suppliers</InputLabel>
-              <Select
-                labelId="suppliers"
-                label="Suppliers"
+                {quoteId && "*update (clear to cancel)"}
+              </Typography>
+            </Typography>
+            <Tooltip title="Close">
+              <IconButton aria-label="close" onClick={handleClose}>
+                <Close />
+              </IconButton>
+            </Tooltip>
+          </Box>
+          <Divider sx={{ margin: "1rem 0 1.5rem" }} />
+          <Box
+            className={styles.form_container}
+            component="form"
+            autoComplete="off"
+            noValidate
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <Box className={styles.form_fields}>
+              <FormControl
                 size="small"
-                {...register("supplierId", { required: true })}
-                value={supplierId}
-                onChange={handleChangeSupplier}
+                error={Boolean(errors.purchaseRequestId)}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                {suppliers.map((supplier) => (
-                  <MenuItem key={supplier.id} value={supplier.id}>
-                    {supplier.name}
+                <InputLabel id="purchaseRequests">Purchase Requests</InputLabel>
+                <Select
+                  labelId="purchaseRequests"
+                  label="Purchase Requests"
+                  size="small"
+                  {...register("purchaseRequestId", { required: true })}
+                  value={purchaseRequestId}
+                  onChange={handleChangePurchaseRequest}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
                   </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>
-                {errors.supplierId && "Field is required"}
-              </FormHelperText>
-            </FormControl>
-            <TextField
-              key={`price-${key}`}
-              label="Price"
-              size="small"
-              {...register("price", {
-                required: true,
-                pattern: useNumberPattern,
-              })}
-              helperText={errors.price && "Field should be a valid number"}
-              error={Boolean(errors.price)}
-              disabled={loading}
+                  {purchaseRequests.map((purchaseRequest) => (
+                    <MenuItem
+                      key={purchaseRequest.id}
+                      value={purchaseRequest.id}
+                    >
+                      {findProduct(purchaseRequest.productId)}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>
+                  {errors.purchaseRequestId && "Field is required"}
+                </FormHelperText>
+              </FormControl>
+              <FormControl size="small" error={Boolean(errors.supplierId)}>
+                <InputLabel id="suppliers">Suppliers</InputLabel>
+                <Select
+                  labelId="suppliers"
+                  label="Suppliers"
+                  size="small"
+                  {...register("supplierId", { required: true })}
+                  value={supplierId}
+                  onChange={handleChangeSupplier}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {suppliers.map((supplier) => (
+                    <MenuItem key={supplier.id} value={supplier.id}>
+                      {supplier.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>
+                  {errors.supplierId && "Field is required"}
+                </FormHelperText>
+              </FormControl>
+              <TextField
+                key={`price-${key}`}
+                label="Price"
+                size="small"
+                {...register("price", {
+                  required: true,
+                  pattern: useNumberPattern,
+                })}
+                helperText={errors.price && "Field should be a valid number"}
+                error={Boolean(errors.price)}
+                disabled={loading}
+              />
+            </Box>
+            <Box className={styles.form_controls}>
+              <Button type="submit" variant="contained">
+                {quoteId ? "Update" : "Create"}
+              </Button>
+              <Button type="reset" variant="outlined" onClick={resetForm}>
+                Clear
+              </Button>
+            </Box>
+          </Box>
+        </Card>
+        <Card sx={{ marginTop: "2rem", marginBottom: "2rem" }}>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Purchase Request</TableCell>
+                  <TableCell>Supplier</TableCell>
+                  <TableCell>Price</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell align="center">@</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {quotes
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((quote) => (
+                    <TableRow key={quote.id}>
+                      <TableCell>{findProduct(quote.productId)}</TableCell>
+                      <TableCell>{findSupplier(quote.supplierId)}</TableCell>
+                      <TableCell>{formatCurrency(quote.price)}</TableCell>
+                      <TableCell>
+                        {findPurchaseRequest(quote.purchaseRequestId)?.status}
+                      </TableCell>
+                      <TableCell>
+                        {quote.submittedDate.toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Box display="flex" justifyContent="center">
+                          <Tooltip title="Update">
+                            <IconButton
+                              aria-label="update"
+                              onClick={() => updateFormFields(quote)}
+                            >
+                              <Edit />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Delete">
+                            <IconButton
+                              aria-label="delete"
+                              onClick={() => deleteDocument(quote)}
+                            >
+                              <Delete />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box paddingInline="1.5rem">
+            <TablePagination
+              component="div"
+              count={quotes.length}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              rowsPerPageOptions={[rowsPerPage]}
+              onPageChange={handleChangePage}
             />
           </Box>
-          <Box className={styles.form_controls}>
-            <Button type="submit" variant="contained">
-              {quoteId ? "Update" : "Create"}
-            </Button>
-            <Button type="reset" variant="outlined" onClick={resetForm}>
-              Clear
-            </Button>
-          </Box>
-        </Box>
-      </Card>
-      <Card sx={{ marginTop: "2rem", marginBottom: "2rem" }}>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Purchase Request</TableCell>
-                <TableCell>Supplier</TableCell>
-                <TableCell>Price</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell align="center">@</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {quotes
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((quote) => (
-                  <TableRow key={quote.id}>
-                    <TableCell>{findProduct(quote.productId)}</TableCell>
-                    <TableCell>{findSupplier(quote.supplierId)}</TableCell>
-                    <TableCell>{formatCurrency(quote.price)}</TableCell>
-                    <TableCell>
-                      {findPurchaseRequest(quote.purchaseRequestId)?.status}
-                    </TableCell>
-                    <TableCell>
-                      {quote.submittedDate.toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <Box display="flex" justifyContent="center">
-                        <Tooltip title="Update">
-                          <IconButton
-                            aria-label="update"
-                            onClick={() => updateFormFields(quote)}
-                          >
-                            <Edit />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                          <IconButton
-                            aria-label="delete"
-                            onClick={() => deleteDocument(quote)}
-                          >
-                            <Delete />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Box paddingInline="1.5rem">
-          <TablePagination
-            component="div"
-            count={quotes.length}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={[rowsPerPage]}
-            onPageChange={handleChangePage}
-          />
-        </Box>
-      </Card>
-    </Box>
+        </Card>
+      </Box>
+    </Dialog>
   );
 }

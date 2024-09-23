@@ -30,6 +30,7 @@ import { SnackbarContext } from "src/contexts/snackbar";
 import { useNumberPattern } from "src/composables/patterns";
 import { useNavigate } from "react-router-dom";
 import { useExportToCSV } from "src/composables/exports";
+import { AppQuotesModal } from "src/components";
 
 export default function PurchaseRequests() {
   const {
@@ -65,6 +66,8 @@ export default function PurchaseRequests() {
   const rowsPerPage = 10;
 
   const [order, setOrder] = useState("asc");
+
+  const [open, setOpen] = useState(false);
 
   const updateFormFields = (data) => {
     Object.entries(data).map(([prop, value]) => setValue(prop, value));
@@ -143,7 +146,6 @@ export default function PurchaseRequests() {
       quoteRequests.push(firebaseService.deleteDocById("quotes", quoteId))
     );
     const quoteResponses = await Promise.all(quoteRequests);
-    console.log(quoteResponses);
     if (quoteResponses.find((resp) => resp.code !== 200)) {
       setSeverity("error");
       setSnack("failed to delete quotes linked to purchase request!");
@@ -184,6 +186,12 @@ export default function PurchaseRequests() {
     return order === "desc"
       ? (a, b) => new Date(b.submittedDate) - new Date(a.submittedDate)
       : (a, b) => new Date(a.submittedDate) - new Date(b.submittedDate);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason !== "backdropClick") {
+      setOpen(false);
+    }
   };
 
   useEffect(() => {
@@ -289,6 +297,7 @@ export default function PurchaseRequests() {
                 <TableCell>Description</TableCell>
                 <TableCell>Quantity</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Quotes</TableCell>
                 <TableCell sortDirection={order}>
                   <TableSortLabel
                     active={true}
@@ -314,6 +323,9 @@ export default function PurchaseRequests() {
                     <TableCell>{purchaseRequest.quantity}</TableCell>
                     <TableCell>{purchaseRequest.status}</TableCell>
                     <TableCell>
+                      {purchaseRequest.quoteIds?.length} / 3
+                    </TableCell>
+                    <TableCell>
                       {purchaseRequest.submittedDate.toLocaleDateString()}
                     </TableCell>
                     <TableCell>
@@ -322,7 +334,7 @@ export default function PurchaseRequests() {
                           <Tooltip title="Fulfill">
                             <IconButton
                               aria-label="fulfill"
-                              onClick={() => navigate("/quotes")}
+                              onClick={() => setOpen(true)}
                             >
                               <Launch />
                             </IconButton>
@@ -362,6 +374,7 @@ export default function PurchaseRequests() {
           />
         </Box>
       </Card>
+      <AppQuotesModal open={open} handleClose={handleClose} />
     </Box>
   );
 }
