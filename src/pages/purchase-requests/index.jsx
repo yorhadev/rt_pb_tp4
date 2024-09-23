@@ -96,7 +96,7 @@ export default function PurchaseRequests() {
 
   const findUser = (userId) => {
     const user = users.find((user) => user?.id === userId);
-    return user.name;
+    return user?.name;
   };
 
   const handleChangePage = (event, newPage) => {
